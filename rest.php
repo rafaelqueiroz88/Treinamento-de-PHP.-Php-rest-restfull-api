@@ -2,7 +2,9 @@
 
     //header("Content-type: application/json");
 
-    $verb = $_SERVER["REQUEST_METHOD"];
+    $verb = $_SERVER["REQUEST_METHOD"]; //Armazena o método utilizado na variável
+
+    //As variáveis host,user,pass,db e con serão utilizadas somente para conectar e utilizar o bando de dados
 
     $host = "localhost";
 
@@ -14,7 +16,27 @@
 
     $con = mysqli_connect($host, $user, $pass, $db);
 
-    if($verb == "GET")
+    //Se o método recebido pela variável for um método POST ele entrará na seguinte função
+    //Casos de uso: salvar alguma informação no bando de dados
+    if($verb == "POST")
+    {
+
+        $inputJSON = file_get_contents('php://input');
+
+        $input = json_decode($inputJSON, true);
+
+        if(mysqli_query($con, "INSERT INTO ar_clientes (ar_primeiro_nome, ar_sobrenome) VALUES ('".$input["ar_primeiro_nome"]."', '".$input["ar_sobrenome"]."')"))
+        {
+
+            echo "Cadastro efetuado com sucesso!";
+
+        }
+
+    }
+    //Se o método recebido pela variável for um método GET ele entrará na seguinte função.
+    //Casos de uso: fazer listagem de algo ou abrir os resultados de algo específico
+    //Obs: se o objetivo for utilizar este método para abrir um objeto específico do BD, lembre-se de informar a ID do objeto solicitado
+    else if($verb == "GET")
     {
 
         if(isset($_GET["usuario"]))
@@ -38,17 +60,33 @@
             echo json_encode($json);
 
         }
+
     }
-    else if($verb == "POST")
+    //Se o método recebido pela variável for um método PUT ele entrará na seguinte função
+    //Casos de uso: use para atualizar objetos já cadastrados no bando de dados
+    //Obs: o uso deste método exige que uma ID ou algum meio identificador seja informado como parâmetro
+    else if($verb == "PUT")
     {
-
         $inputJSON = file_get_contents('php://input');
-
+        
         $input = json_decode($inputJSON, true);
 
-        mysqli_query($con, "INSERT INTO ar_clientes (ar_primeiro_nome, ar_sobrenome) VALUES ('".$input["ar_primeiro_nome"]."', '".$input["ar_sobrenome"]."')");
+        $nome = $input["ar_primeiro_nome"];
 
-    }
+        $sobrenome = $input["ar_sobrenome"];
+
+        $id = $_GET["ID"];
+
+        if(mysqli_query($con, "UPDATE ar_clientes SET ar_primeiro_nome = '$nome' AND ar_sobrenome = '$sobrenome' WHERE ar_id = $id"))
+        {
+
+            echo "Cadastro atualizado com sucesso!";
+
+        }
+
+    }    
+    //Se o método recebido pela variável for um método DELETE ele entrará na seguinte função
+    //Casos de uso: apagar coisas do banco de dados
     else if($verb = "DELETE")
     {
 
@@ -56,7 +94,11 @@
 
         $input = json_decode($inputJSON, true);
 
-        if(mysqli_query($con, "DELETE FROM ar_clientes WHERE ar_primeiro_nome = '".$input["nome"]."' AND ar_sobrenome = '".$input["sobrenome"]."'"))
+        $nome = $input["ar_primeiro_nome"];
+        
+        $sobrenome = $input["ar_sobrenome"];
+
+        if(mysqli_query($con, "DELETE FROM ar_clientes WHERE ar_primeiro_nome = '$nome' AND ar_sobrenome = '$sobrenome'"))
         {
 
             echo "Usuário removido com sucesso!";
@@ -64,4 +106,5 @@
         }
 
     }
+
 ?>
