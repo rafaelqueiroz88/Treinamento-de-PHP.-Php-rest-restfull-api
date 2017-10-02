@@ -16,11 +16,15 @@
 
     $con = mysqli_connect($host, $user, $pass, $db);
 
-    echo "Bem vindo!";
+    if($verb == "" || $verb == null)
+    {
 
+        echo "Bem vindo! <br/> Informe um método qualquer e faça a requisição necessária!";
+        
+    }
     //Se o método recebido pela variável for um método POST ele entrará na seguinte função
     //Casos de uso: salvar alguma informação no bando de dados
-    if($verb == "POST")
+    else if($verb == "POST")
     {
 
         $inputJSON = file_get_contents('php://input');
