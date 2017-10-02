@@ -20,7 +20,7 @@
     {
 
         echo "Bem vindo! <br/> Informe um método qualquer e faça a requisição necessária!";
-        
+
     }
     //Se o método recebido pela variável for um método POST ele entrará na seguinte função
     //Casos de uso: salvar alguma informação no bando de dados
@@ -49,29 +49,37 @@
     else if($verb == "GET")
     {
 
-        if(isset($_GET["usuario"]))
+        $usuario = isset($_GET["usuario"]) ? $_GET["usuario"] : null;
+
+        if($usuario != null || $usuario != "")
+        {
+
+            $sql = mysqli_query($con, "SELECT * FROM ar_clientes WHERE ar_primeiro_nome = '$usuario'");
+
+        }
+        else
         {
 
             $sql = mysqli_query($con, "SELECT * FROM ar_clientes");
 
-            $json = array();
+        }
 
-            $i = 0;
+        $json = array();
 
-            while($row = mysqli_fetch_array($sql))
-            {
+        $i = 0;
 
-                $json[$i] = array("Nome" => $row["ar_primeiro_nome"], "Sobrenome" => $row["ar_sobrenome"]);
+        while($row = mysqli_fetch_array($sql))
+        {
 
-                $i++;
+            $json[$i] = array("Nome" => $row["ar_primeiro_nome"], "Sobrenome" => $row["ar_sobrenome"]);
 
-            }
-
-            $i = 0;
-            
-            echo json_encode($json);
+            $i++;
 
         }
+
+        $i = 0;
+        
+        echo json_encode($json);
 
     }
     //Se o método recebido pela variável for um método PUT ele entrará na seguinte função
