@@ -16,6 +16,8 @@
 
     $con = mysqli_connect($host, $user, $pass, $db);
 
+    echo "Bem vindo!";
+
     //Se o método recebido pela variável for um método POST ele entrará na seguinte função
     //Casos de uso: salvar alguma informação no bando de dados
     if($verb == "POST")
@@ -25,7 +27,11 @@
 
         $input = json_decode($inputJSON, true);
 
-        if(mysqli_query($con, "INSERT INTO ar_clientes (ar_primeiro_nome, ar_sobrenome) VALUES ('".$input["ar_primeiro_nome"]."', '".$input["ar_sobrenome"]."')"))
+        $nome = $input["ar_primeiro_nome"];
+        
+        $sobrenome = $input["ar_sobrenome"];
+
+        if(mysqli_query($con, "INSERT INTO ar_clientes (ar_primeiro_nome, ar_sobrenome) VALUES ('$nome', '$sobrenome')"))
         {
 
             echo "Cadastro efetuado com sucesso!";
@@ -56,6 +62,8 @@
                 $i++;
 
             }
+
+            $i = 0;
             
             echo json_encode($json);
 
